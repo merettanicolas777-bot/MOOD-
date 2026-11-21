@@ -11,12 +11,12 @@ export default function Toast() {
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-[120] flex justify-center px-4">
       <div
         key={toast.id}
-        className="anim-rise pointer-events-auto flex max-w-sm items-center gap-3 rounded-full border border-white/15 bg-carbon/95 px-4 py-3 text-sm text-white shadow-2xl backdrop-blur"
+        className="anim-rise pointer-events-auto flex max-w-sm items-center gap-3 rounded-full border border-white/10 bg-ink/95 px-4 py-3 text-sm text-white shadow-2xl backdrop-blur"
         role="status"
       >
         <span
           className={`grid size-6 shrink-0 place-items-center rounded-full ${
-            isError ? 'bg-white text-ink' : 'bg-white text-ink'
+            isError ? 'bg-white text-ink' : 'bg-brand text-ink'
           }`}
         >
           {isError ? <X size={14} /> : <Check size={14} />}

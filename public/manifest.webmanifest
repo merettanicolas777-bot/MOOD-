@@ -1,31 +1,25 @@
 {
-  "name": "Mood Indumentaria — Panel",
-  "short_name": "Mood Panel",
-  "description": "Panel de administración de Mood Indumentaria",
+  "name": "Shadday Indumentaria — Panel",
+  "short_name": "Shadday Panel",
+  "description": "Panel de administración de Shadday Indumentaria",
   "lang": "es-AR",
   "start_url": "/admin",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0A0A0A",
-  "theme_color": "#0A0A0A",
+  "background_color": "#111111",
+  "theme_color": "#F5E614",
   "icons": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
+      "src": "/img/shadday-logo.jpeg",
+      "sizes": "500x500",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/img/shadday-logo.jpeg",
+      "sizes": "500x500",
+      "type": "image/jpeg",
       "purpose": "maskable"
     }
   ]

@@ -1,10 +1,10 @@
 export default function Logo({ className = '' }) {
   return (
     <img
-      src="/img/mood-logo.png"
-      alt="Mood Indumentaria"
+      src="/img/shadday-logo.jpeg"
+      alt="Shadday Indumentaria"
       draggable="false"
-      className={`w-auto select-none ${className}`}
+      className={`shrink-0 select-none rounded-full object-cover ${className}`}
     />
   )
 }

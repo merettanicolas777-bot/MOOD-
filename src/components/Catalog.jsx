@@ -59,8 +59,7 @@ export default function Catalog() {
     })
   }, [products, category, size, newOnly, search, sort])
 
-  const filtersActive =
-    category !== 'Todos' || Boolean(size) || newOnly || Boolean(search.trim())
+  const filtersActive = category !== 'Todos' || Boolean(size) || newOnly || Boolean(search.trim())
 
   const resetFilters = () => {
     setCategory('Todos')
@@ -76,8 +75,8 @@ export default function Catalog() {
   }, [newOnly])
 
   return (
-    <section id="catalogo" className="bg-white text-ink">
-      <div className="mx-auto max-w-[1440px] px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
+    <section id="catalogo" className="bg-cream text-ink">
+      <div className="mx-auto max-w-[1400px] px-5 py-8 sm:px-8 lg:px-10 lg:py-12">
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0">
@@ -89,10 +88,10 @@ export default function Catalog() {
                     type="button"
                     onClick={() => setCategory(item)}
                     className={cn(
-                      'shrink-0 border px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] transition',
+                      'shrink-0 rounded-full border px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] transition',
                       active
-                        ? 'border-ink bg-ink text-white'
-                        : 'border-ink/15 text-ink/60 hover:border-ink/50 hover:text-ink',
+                        ? 'border-ink bg-ink text-cream'
+                        : 'border-ink/15 text-muted hover:border-ink/40 hover:text-ink',
                     )}
                     aria-pressed={active}
                   >
@@ -102,7 +101,7 @@ export default function Catalog() {
               })}
             </div>
 
-            <div className="flex shrink-0 items-center gap-4 text-[10px] uppercase tracking-[0.18em] text-ink/40">
+            <div className="flex shrink-0 items-center gap-4 text-[10px] uppercase tracking-[0.16em] text-muted">
               <span>
                 {filtered.length} {filtered.length === 1 ? 'prenda' : 'prendas'}
               </span>
@@ -112,23 +111,25 @@ export default function Catalog() {
                   onClick={resetFilters}
                   className="inline-flex items-center gap-1.5 border-b border-ink/30 pb-0.5 text-ink transition hover:border-ink"
                 >
-                  <X size={11} /> Limpiar filtros
+                  <X size={11} /> Limpiar
                 </button>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 border-t border-ink/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-1 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-ink/35">
+              <span className="mr-1 inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-muted">
                 <SlidersHorizontal size={12} /> Talle
               </span>
               <button
                 type="button"
                 onClick={() => setSize('')}
                 className={cn(
-                  'min-w-9 border px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition',
-                  !size ? 'border-ink bg-ink text-white' : 'border-ink/15 text-ink/50 hover:border-ink/40',
+                  'min-w-9 rounded-full border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition',
+                  !size
+                    ? 'border-ink bg-ink text-cream'
+                    : 'border-ink/15 text-muted hover:border-ink/40',
                 )}
               >
                 Todos
@@ -139,10 +140,10 @@ export default function Catalog() {
                   type="button"
                   onClick={() => setSize(size === item ? '' : item)}
                   className={cn(
-                    'min-w-9 border px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition',
+                    'min-w-9 rounded-full border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition',
                     size === item
-                      ? 'border-ink bg-ink text-white'
-                      : 'border-ink/15 text-ink/50 hover:border-ink/40',
+                      ? 'border-ink bg-ink text-cream'
+                      : 'border-ink/15 text-muted hover:border-ink/40',
                   )}
                   aria-pressed={size === item}
                 >
@@ -153,10 +154,10 @@ export default function Catalog() {
                 type="button"
                 onClick={() => setNewOnly(!newOnly)}
                 className={cn(
-                  'ml-1 border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] transition',
+                  'ml-1 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] transition',
                   newOnly
-                    ? 'border-ink bg-ink text-white'
-                    : 'border-ink/15 text-ink/50 hover:border-ink/40',
+                    ? 'border-brand bg-brand text-ink'
+                    : 'border-ink/15 text-muted hover:border-ink/40',
                 )}
                 aria-pressed={newOnly}
               >
@@ -165,7 +166,7 @@ export default function Catalog() {
             </div>
 
             <div className="flex items-center gap-2">
-              <label htmlFor="sort" className="text-[10px] uppercase tracking-[0.18em] text-ink/35">
+              <label htmlFor="sort" className="text-[10px] uppercase tracking-[0.16em] text-muted">
                 Orden
               </label>
               <div className="relative">
@@ -173,7 +174,7 @@ export default function Catalog() {
                   id="sort"
                   value={sort}
                   onChange={(event) => setSort(event.target.value)}
-                  className="appearance-none border border-ink/15 bg-transparent py-2 pl-3 pr-8 text-[11px] font-medium uppercase tracking-[0.12em] text-ink outline-none transition focus:border-ink"
+                  className="appearance-none rounded-full border border-ink/15 bg-transparent py-2 pl-3.5 pr-8 text-[11px] font-medium uppercase tracking-[0.1em] text-ink outline-none transition focus:border-ink"
                 >
                   {SORTS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -181,7 +182,7 @@ export default function Catalog() {
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[8px] text-ink/50">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[8px] text-muted">
                   ▼
                 </span>
               </div>
@@ -190,31 +191,29 @@ export default function Catalog() {
         </div>
 
         {loading ? (
-          <div className="mt-9 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="animate-pulse">
-                <div className="aspect-[3/4] w-full bg-mist" />
-                <div className="mt-3 h-3 w-2/3 bg-mist" />
-                <div className="mt-2 h-3 w-1/3 bg-mist" />
+                <div className="aspect-[3/4] w-full rounded-xl bg-mist" />
+                <div className="mt-3 h-3 w-2/3 rounded bg-mist" />
+                <div className="mt-2 h-3 w-1/3 rounded bg-mist" />
               </div>
             ))}
           </div>
         ) : error && !products.length ? (
-          <div className="mt-12 flex flex-col items-center border border-dashed border-ink/20 px-6 py-16 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em]">
-              No pudimos cargar el catálogo
-            </p>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-ink/50">{error}</p>
+          <div className="mt-12 flex flex-col items-center rounded-2xl border border-dashed border-ink/20 px-6 py-16 text-center">
+            <p className="font-serif text-xl">No pudimos cargar el catálogo</p>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">{error}</p>
             <button
               type="button"
               onClick={() => refresh()}
-              className="mt-6 bg-ink px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition hover:bg-carbon"
+              className="mt-6 rounded-full bg-ink px-6 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-ink/85"
             >
               Reintentar
             </button>
           </div>
         ) : filtered.length ? (
-          <div className="mt-9 grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-3 xl:grid-cols-4">
             {filtered.map((product, index) => (
               <Reveal key={product.id} delay={Math.min(index * 45, 270)}>
                 <ProductCard product={product} />
@@ -222,15 +221,15 @@ export default function Catalog() {
             ))}
           </div>
         ) : (
-          <div className="mt-12 flex flex-col items-center border border-dashed border-ink/15 px-6 py-16 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em]">Sin resultados</p>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-ink/50">
+          <div className="mt-12 flex flex-col items-center rounded-2xl border border-dashed border-ink/15 px-6 py-16 text-center">
+            <p className="font-serif text-xl">Sin resultados</p>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted">
               No encontramos prendas con esos filtros. Probá con otro talle o categoría.
             </p>
             <button
               type="button"
               onClick={resetFilters}
-              className="mt-6 bg-ink px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition hover:bg-carbon"
+              className="mt-6 rounded-full bg-ink px-6 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-ink/85"
             >
               Ver todo el catálogo
             </button>

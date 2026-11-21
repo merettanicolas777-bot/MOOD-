@@ -9,11 +9,11 @@ export default function CatalogPage() {
   return (
     <SiteLayout>
       <PageHeader
-        eyebrow="Catálogo · Otoño / Invierno 26"
+        eyebrow="Nueva temporada"
         title="Catálogo"
-        description="Remeras oversize, buzos, cargos y abrigos de tiradas cortas. Filtrá por categoría, talle o precio y armá tu pedido por WhatsApp."
+        description="Vestidos, conjuntos, tops, jeans, abrigos y accesorios seleccionados uno por uno. Filtrá por categoría, talle o precio y armá tu pedido por WhatsApp."
       >
-        <p className="mt-6 text-[10px] uppercase tracking-[0.2em] text-white/30">
+        <p className="mt-5 text-[10px] uppercase tracking-[0.18em] text-muted">
           {products.length} prendas disponibles
         </p>
       </PageHeader>

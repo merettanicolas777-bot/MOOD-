@@ -1,13 +1,29 @@
 import { formatPrice } from './format'
 
-export const WHATSAPP_NUMBER = '5493624819223'
-export const WHATSAPP_DISPLAY = '+54 9 362 481-9223'
-export const STORE_ADDRESS = 'Sta. Fe 1141, H3500 Resistencia, Chaco, Argentina'
-export const STORE_HOURS = 'Lunes a domingo · 11:00 a 20:00 hs'
+export const BRAND = 'Shadday Indumentaria'
+export const WHATSAPP_NUMBER = (import.meta.env.VITE_WHATSAPP_NUMBER || '5493624000000').replace(
+  /\D/g,
+  '',
+)
+function formatDisplay(digits) {
+  if (digits.length === 13 && digits.startsWith('549')) {
+    return `+54 9 ${digits.slice(3, 6)} ${digits.slice(6, 9)}-${digits.slice(9)}`
+  }
+  return `+${digits}`
+}
+
+export const WHATSAPP_DISPLAY = formatDisplay(WHATSAPP_NUMBER)
+export const STORE_ADDRESS = 'Arturo Frondizi 174, H3500 Resistencia, Chaco, Argentina'
+export const STORE_ADDRESS_SHORT = 'Arturo Frondizi 174, Resistencia'
+export const STORE_HOURS = 'Lunes a sábado · 9:00 a 12:30 y 17:00 a 21:00 hs'
+export const STORE_HOURS_MORNING = '9:00 a 12:30 hs'
+export const STORE_HOURS_AFTERNOON = '17:00 a 21:00 hs'
+export const INSTAGRAM_HANDLE = '@shaddayindumentaria'
+export const INSTAGRAM_URL = 'https://www.instagram.com/shaddayindumentaria'
 export const MAPS_LINK =
-  'https://www.google.com/maps/search/?api=1&query=Sta.+Fe+1141,+Resistencia,+Chaco,+Argentina'
+  'https://www.google.com/maps/search/?api=1&query=Arturo+Frondizi+174,+Resistencia,+Chaco,+Argentina'
 export const MAPS_EMBED =
-  'https://www.google.com/maps?q=Sta.+Fe+1141,+H3500+Resistencia,+Chaco,+Argentina&z=16&output=embed'
+  'https://www.google.com/maps?q=Arturo+Frondizi+174,+H3500+Resistencia,+Chaco,+Argentina&z=16&output=embed'
 
 export function whatsappLink(message = '') {
   const base = `https://wa.me/${WHATSAPP_NUMBER}`
@@ -16,11 +32,13 @@ export function whatsappLink(message = '') {
 
 export function buildOrderMessage({ items, total, name, delivery, payment, address }) {
   const lines = [
-    '*NUEVO PEDIDO · MOOD INDUMENTARIA*',
+    '*NUEVO PEDIDO · SHADDAY INDUMENTARIA*',
     '',
     `*Cliente:* ${name}`,
     `*Modalidad:* ${
-      delivery === 'envio' ? 'Envío a domicilio (Resistencia)' : 'Retiro en el local — Sta. Fe 1141'
+      delivery === 'envio'
+        ? 'Envío a domicilio (Resistencia)'
+        : 'Retiro en el local — Arturo Frondizi 174'
     }`,
     `*Pago:* ${payment}`,
   ]

@@ -119,7 +119,57 @@ create policy "fotos_delete" on storage.objects
   for delete to authenticated
   using (bucket_id = 'product-images' and public.is_admin());
 
--- 6. Tu usuario admin --------------------------------------------------------
+-- 6. Limpieza del catálogo demo de la marca anterior ----------------------
+-- Si ya cargaste prendas reales, comentá este bloque antes de ejecutar.
+
+delete from public.products
+where name in (
+  'Remera Oversize Off Black',
+  'Remera Boxy Heavy Bone',
+  'Buzo Hoodie Carbon',
+  'Buzo Crewneck Fog',
+  'Pantalón Cargo Utility',
+  'Campera Puffer Nocturna',
+  'Campera Bomber Sarga',
+  'Gorra Curva Mood'
+);
+
+delete from public.categories
+where name in ('Remeras', 'Buzos', 'Pantalones');
+
+-- 7. Catálogo inicial (8 prendas de muestra) -----------------------------
+
+insert into public.categories (name) values ('Remeras y Tops') on conflict (name) do nothing;
+insert into public.categories (name) values ('Pantalones y Jeans') on conflict (name) do nothing;
+insert into public.categories (name) values ('Vestidos y Conjuntos') on conflict (name) do nothing;
+insert into public.categories (name) values ('Abrigos') on conflict (name) do nothing;
+insert into public.categories (name) values ('Accesorios') on conflict (name) do nothing;
+
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Vestido Knit Arena', 46900, 'Vestidos y Conjuntos', 'Vestido largo de tejido acanalado en tono arena. Calce suave que acompaña el cuerpo, mangas largas y cuello redondo. Un básico que pasa del día a la noche.', 'Tejido acanalado · 60% algodón / 40% poliéster', 'Calce al cuerpo · Largo midi', array['S', 'M', 'L', 'XL']::text[], array['/img/vestido-knit.jpg']::text[], true, true, true, '2026-11-20T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Vestido Knit Arena');
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Conjunto Lino Salvia', 58900, 'Vestidos y Conjuntos', 'Conjunto de lino en verde salvia: camisa corta con amarre y pantalón wide leg. Liviano, ideal para media estación y para usar por separado.', 'Lino lavado · 55% lino / 45% viscosa', 'Relaxed · Pantalón wide leg', array['XS', 'S', 'M', 'L']::text[], array['/img/conjunto-lino.jpg']::text[], true, true, true, '2026-11-18T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Conjunto Lino Salvia');
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Top Acanalado Blanco', 19900, 'Remeras y Tops', 'Top corto de punto acanalado, manga corta y escote redondo. Se lleva solo o debajo de blazers y camperas.', 'Punto acanalado elastizado', 'Ajustado · Tiro corto', array['XS', 'S', 'M', 'L']::text[], array['/img/top-acanalado.jpg']::text[], true, false, true, '2026-11-16T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Top Acanalado Blanco');
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Jean Wide Light', 52900, 'Pantalones y Jeans', 'Jean de pierna ancha en denim claro con tiro alto y cintura cómoda. El que combina con todo y estiliza la silueta.', 'Denim de algodón con stretch', 'Tiro alto · Wide leg', array['S', 'M', 'L', 'XL']::text[], array['/img/jean-wide.jpg']::text[], true, false, false, '2026-11-12T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Jean Wide Light');
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Abrigo Sastrero Camel', 89900, 'Abrigos', 'Tapado sastrero de lana en tono camel, cruzado y con bolsillos. Abriga sin sumar volumen y eleva cualquier look.', 'Mezcla de lana · Forrería interior', 'Recto · Largo debajo de la rodilla', array['S', 'M', 'L']::text[], array['/img/abrigo-camel.jpg']::text[], true, true, false, '2026-11-06T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Abrigo Sastrero Camel');
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Bolso Raffia + Cadena', 26900, 'Accesorios', 'Bolso tejido en rafia con asas de cuero negro y cadena fina dorada. Talle único, cierre imantado y forro interior.', 'Rafia natural · Detalles de cuero', 'Talle único', array['Único']::text[], array['/img/accesorios.jpg']::text[], true, false, true, '2026-11-19T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Bolso Raffia + Cadena');
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Remera Básica Algodón', 17900, 'Remeras y Tops', 'Remera de algodón peinado con calce relajado y ruedo recto. La base de todos los looks, en blanco roto.', 'Algodón peinado 24/1', 'Relaxed · Hombro caído', array['XS', 'S', 'M', 'L', 'XL']::text[], array['/img/top-acanalado.jpg']::text[], true, false, false, '2026-11-02T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Remera Básica Algodón');
+insert into public.products (name, price, category, description, fabric, fit, sizes, images, in_stock, featured, is_new, created_at)
+select 'Pantalón Sastrero Crema', 44900, 'Pantalones y Jeans', 'Pantalón sastrero de pinzas en crema, tiro alto y pierna amplia. Formal o informal, siempre prolijo.', 'Mezcla de lino y viscosa', 'Tiro alto · Pierna amplia', array['S', 'M', 'L', 'XL']::text[], array['/img/conjunto-lino.jpg']::text[], false, false, false, '2026-10-28T12:00:00.000Z'
+where not exists (select 1 from public.products where name = 'Pantalón Sastrero Crema');
+-- 8. Tu usuario admin --------------------------------------------------------
 --
 -- a) En Supabase: Authentication → Users → "Add user".
 --    Cargá el correo y la contraseña y marcá "Auto Confirm User".

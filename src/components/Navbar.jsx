@@ -1,14 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowUpRight, Menu, MessageCircle, Search, ShoppingBag, X } from 'lucide-react'
+import { ArrowUpRight, Instagram, Menu, Search, ShoppingBag, X } from 'lucide-react'
 import Logo from './Logo'
 import { useStore } from '../context/StoreContext'
 import { navigate } from '../lib/router'
-import { STORE_HOURS, WHATSAPP_DISPLAY, whatsappLink } from '../lib/whatsapp'
+import {
+  INSTAGRAM_HANDLE,
+  INSTAGRAM_URL,
+  STORE_ADDRESS_SHORT,
+  STORE_HOURS,
+  WHATSAPP_DISPLAY,
+  whatsappLink,
+} from '../lib/whatsapp'
 
 const LINKS = [
   { label: 'Inicio', to: '/' },
   { label: 'Catálogo', to: '/catalogo' },
-  { label: 'Ubicación', to: '/ubicacion' },
+  { label: 'Nuevos ingresos', to: '/catalogo', arrivals: true },
+  { label: 'Horarios y ubicación', to: '/ubicacion' },
 ]
 
 function normalizePath() {
@@ -24,7 +32,7 @@ export default function Navbar() {
   const path = normalizePath()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => setScrolled(window.scrollY > 16)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -51,13 +59,14 @@ export default function Navbar() {
     setSearchOpen(false)
     if (link.to === '/catalogo') {
       setSearch('')
-      setNewOnly(false)
+      setNewOnly(Boolean(link.arrivals))
     }
     navigate(link.to)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const isActive = (link) => {
+    if (link.arrivals) return false
     if (link.to === '/') return path === '/'
     if (link.to === '/catalogo') return path === '/catalogo' || path.startsWith('/producto/')
     return path === link.to
@@ -66,19 +75,20 @@ export default function Navbar() {
   const submitSearch = (event) => {
     event.preventDefault()
     setSearchOpen(false)
+    setNewOnly(false)
     navigate('/catalogo')
   }
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'border-b border-white/10 bg-ink/90 backdrop-blur-xl'
-            : 'border-b border-transparent bg-gradient-to-b from-ink/70 to-transparent'
+            ? 'border-b border-line bg-cream/95 backdrop-blur-xl'
+            : 'border-b border-transparent bg-cream'
         }`}
       >
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-3 px-5 sm:h-20 lg:px-10">
+        <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-4 px-5 sm:h-[74px] lg:px-10">
           <a
             href="/"
             onClick={(event) => {
@@ -86,26 +96,32 @@ export default function Navbar() {
               navigate('/')
               window.scrollTo({ top: 0, behavior: 'smooth' })
             }}
-            className="shrink-0"
-            aria-label="Mood Indumentaria — inicio"
+            className="flex shrink-0 items-center gap-2.5"
+            aria-label="Shadday Indumentaria — inicio"
           >
-            <Logo className="h-8 w-auto sm:h-10" />
+            <Logo className="h-10 w-10 sm:h-11 sm:w-11" />
+            <span className="hidden flex-col leading-none sm:flex">
+              <span className="font-serif text-base font-semibold tracking-[0.16em]">SHADDAY</span>
+              <span className="mt-1 text-[8px] font-medium uppercase tracking-[0.34em] text-muted">
+                Indumentaria
+              </span>
+            </span>
           </a>
 
-          <nav className="hidden items-center gap-9 lg:flex" aria-label="Navegación principal">
+          <nav className="hidden items-center gap-8 lg:flex" aria-label="Navegación principal">
             {LINKS.map((link) => (
               <a
                 key={link.label}
-                href={link.to}
+                href={link.arrivals ? '/catalogo' : link.to}
                 onClick={(event) => goToPage(event, link)}
                 aria-current={isActive(link) ? 'page' : undefined}
-                className={`group relative text-[11px] font-medium uppercase tracking-[0.22em] transition ${
-                  isActive(link) ? 'text-white' : 'text-white/60 hover:text-white'
+                className={`group relative text-[11px] font-medium uppercase tracking-[0.16em] transition ${
+                  isActive(link) ? 'text-ink' : 'text-muted hover:text-ink'
                 }`}
               >
                 {link.label}
                 <span
-                  className={`absolute -bottom-1.5 left-0 h-px bg-white transition-all duration-300 ${
+                  className={`absolute -bottom-2 left-0 h-[2px] bg-brand transition-all duration-300 ${
                     isActive(link) ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}
                 />
@@ -113,40 +129,36 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-0.5 sm:gap-1.5">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             <button
               type="button"
               onClick={() => setSearchOpen((open) => !open)}
-              className="grid size-10 place-items-center text-white/80 transition hover:text-white"
+              className="grid size-10 place-items-center rounded-full text-ink/80 transition hover:bg-ink/5 hover:text-ink"
               aria-label="Buscar prendas"
               aria-expanded={searchOpen}
             >
-              {searchOpen ? (
-                <X size={19} strokeWidth={1.6} />
-              ) : (
-                <Search size={19} strokeWidth={1.6} />
-              )}
+              {searchOpen ? <X size={19} strokeWidth={1.7} /> : <Search size={19} strokeWidth={1.7} />}
             </button>
 
             <a
-              href={whatsappLink('Hola MOOD! Quiero consultar por una prenda.')}
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noreferrer"
-              className="hidden size-10 place-items-center text-white/80 transition hover:text-white sm:grid"
-              aria-label="Escribinos por WhatsApp"
+              className="hidden size-10 place-items-center rounded-full text-ink/80 transition hover:bg-ink/5 hover:text-ink sm:grid"
+              aria-label={`Instagram ${INSTAGRAM_HANDLE}`}
             >
-              <MessageCircle size={19} strokeWidth={1.6} />
+              <Instagram size={19} strokeWidth={1.7} />
             </a>
 
             <button
               type="button"
               onClick={openCart}
-              className="relative grid size-10 place-items-center text-white transition hover:opacity-80"
+              className="relative grid size-10 place-items-center rounded-full text-ink transition hover:bg-ink/5"
               aria-label={`Abrir carrito (${cartCount} prendas)`}
             >
-              <ShoppingBag size={19} strokeWidth={1.6} />
+              <ShoppingBag size={19} strokeWidth={1.7} />
               {cartCount > 0 && (
-                <span className="absolute right-0 top-0.5 grid min-w-5 place-items-center rounded-full bg-white px-1 text-[10px] font-bold leading-5 text-ink">
+                <span className="absolute right-0 top-0 grid min-w-[18px] place-items-center rounded-full bg-brand px-1 text-[10px] font-bold leading-[18px] text-ink ring-2 ring-cream">
                   {cartCount}
                 </span>
               )}
@@ -155,32 +167,32 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className="grid size-10 place-items-center text-white lg:hidden"
+              className="grid size-10 place-items-center rounded-full text-ink lg:hidden"
               aria-label="Abrir menú"
             >
-              <Menu size={21} strokeWidth={1.6} />
+              <Menu size={21} strokeWidth={1.7} />
             </button>
           </div>
         </div>
 
         {searchOpen && (
-          <div className="anim-fade border-t border-white/10 bg-ink/95 backdrop-blur-xl">
+          <div className="anim-fade border-t border-line bg-sand">
             <form
               onSubmit={submitSearch}
-              className="mx-auto flex max-w-[1440px] items-center gap-3 px-5 py-4 lg:px-10"
+              className="mx-auto flex max-w-[1400px] items-center gap-3 px-5 py-4 lg:px-10"
             >
-              <Search size={18} className="shrink-0 text-white/40" />
+              <Search size={18} className="shrink-0 text-muted" />
               <input
                 ref={inputRef}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Buscá por prenda, categoría o talle…"
-                className="w-full bg-transparent py-2 text-base text-white outline-none placeholder:text-white/35"
+                placeholder="Buscá una prenda, categoría o talle…"
+                className="w-full bg-transparent py-2 text-base text-ink outline-none placeholder:text-muted/60"
                 aria-label="Buscar en el catálogo"
               />
               <button
                 type="submit"
-                className="shrink-0 text-[10px] uppercase tracking-[0.22em] text-white/60 transition hover:text-white"
+                className="shrink-0 rounded-full bg-ink px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-ink/85"
               >
                 Buscar
               </button>
@@ -190,55 +202,61 @@ export default function Navbar() {
       </header>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-[70] bg-ink lg:hidden">
-          <div className="anim-fade flex h-full flex-col px-6 pb-10 pt-6">
+        <div className="fixed inset-0 z-[70] bg-cream lg:hidden">
+          <div className="anim-fade flex h-full flex-col px-6 pb-10 pt-5">
             <div className="flex items-center justify-between">
-              <Logo className="h-9 w-auto" />
+              <Logo className="h-12 w-12" />
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                className="grid size-10 place-items-center border border-white/15 text-white"
+                className="grid size-10 place-items-center rounded-full border border-line text-ink"
                 aria-label="Cerrar menú"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <nav className="mt-14 flex flex-col">
+            <nav className="mt-12 flex flex-col">
               {LINKS.map((link, index) => (
                 <a
                   key={link.label}
                   href={link.to}
                   onClick={(event) => goToPage(event, link)}
-                  className="group flex items-center justify-between border-b border-white/10 py-5 text-3xl font-extrabold uppercase tracking-tight text-white"
+                  className="group flex items-center justify-between border-b border-line py-5 first:border-t"
                 >
-                  <span className="flex items-baseline gap-3">
-                    <span className="text-[10px] font-medium tracking-[0.2em] text-white/30">
+                  <span className="flex items-baseline gap-3 font-serif text-2xl text-ink">
+                    <span className="text-[10px] font-sans tracking-[0.2em] text-muted/60">
                       0{index + 1}
                     </span>
                     {link.label}
                   </span>
-                  <ArrowUpRight
-                    size={22}
-                    className="text-white/30 transition group-hover:text-white"
-                  />
+                  <ArrowUpRight size={20} className="text-muted transition group-hover:text-ink" />
                 </a>
               ))}
             </nav>
 
-            <div className="mt-auto space-y-4 pt-10">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-white/35">Pedidos</p>
+            <div className="mt-auto space-y-3 pt-10">
+              <p className="text-[9px] uppercase tracking-[0.28em] text-muted">Pedidos</p>
               <a
-                href={whatsappLink('Hola MOOD! Quiero hacer un pedido.')}
+                href={whatsappLink('Hola Shadday! Quiero hacer un pedido.')}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-between border border-white/20 px-4 py-4 text-sm text-white"
+                className="flex items-center justify-between rounded-full bg-brand px-5 py-4 text-sm font-semibold text-ink"
               >
                 <span>{WHATSAPP_DISPLAY}</span>
-                <MessageCircle size={18} />
+                <ArrowUpRight size={18} />
               </a>
-              <p className="text-xs leading-relaxed text-white/45">
-                Sta. Fe 1141, Resistencia
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-between rounded-full border border-line px-5 py-3.5 text-sm text-ink"
+              >
+                <span>{INSTAGRAM_HANDLE}</span>
+                <Instagram size={17} />
+              </a>
+              <p className="pt-2 text-xs leading-relaxed text-muted">
+                {STORE_ADDRESS_SHORT}
                 <br />
                 {STORE_HOURS}
               </p>

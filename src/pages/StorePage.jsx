@@ -16,7 +16,7 @@ export default function StorePage() {
 
   return (
     <SiteLayout>
-      <Hero onShop={() => goCatalog(false)} onNewArrivals={() => goCatalog(true)} />
+      <Hero onShop={() => goCatalog(false)} onVisit={() => navigate('/ubicacion')} />
       <NewArrivals />
       <LocalTeaser />
     </SiteLayout>

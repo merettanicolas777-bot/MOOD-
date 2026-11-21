@@ -1,4 +1,4 @@
-// Capa de datos de Mood Indumentaria: todo el catálogo vive en Supabase
+// Capa de datos de Shadday Indumentaria: todo el catálogo vive en Supabase
 // (tabla `products`, tabla `categories` y bucket `product-images`).
 import { SEED_CATEGORIES, SEED_PRODUCTS } from '../data/seed'
 import { BUCKET, PRODUCTS_TABLE, getSupabase } from './supabase'
@@ -90,6 +90,16 @@ export async function loadCatalog() {
       .select()
     if (!error) {
       products = (data || []).map(fromRow)
+      // Con el catálogo inicial cargamos también sus categorías.
+      const categorias = await supabase
+        .from('categories')
+        .insert(SEED_CATEGORIES.map((name) => ({ name })))
+      if (categorias.error && categorias.error.code !== '23505') {
+        // Si ya existen, seguimos: las leemos abajo.
+        if (!/permission denied|row-level security|42501|Unauthorized/i.test(categorias.error.message)) {
+          throw new Error(toMessage(categorias.error))
+        }
+      }
     } else if (!/permission denied|row-level security|42501|Unauthorized/i.test(error.message)) {
       throw new Error(toMessage(error))
     }
@@ -98,17 +108,8 @@ export async function loadCatalog() {
   let categories = (categoriesRes.data || []).map((row) => row.name)
 
   if (!categories.length) {
-    categories = SEED_CATEGORIES
-    const { error } = await supabase
-      .from('categories')
-      .insert(categories.map((name) => ({ name })))
-    if (
-      error &&
-      error.code !== '23505' &&
-      !/permission denied|row-level security|42501|Unauthorized/i.test(error.message)
-    ) {
-      throw new Error(toMessage(error))
-    }
+    const { data } = await supabase.from('categories').select('*').order('name', { ascending: true })
+    categories = (data || []).map((row) => row.name)
   }
 
   return { products, categories }

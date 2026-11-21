@@ -7,7 +7,7 @@ export default function SiteLayout({ children }) {
   const { cartOpen, closeCart } = useStore()
 
   return (
-    <div className="min-h-screen bg-ink">
+    <div className="min-h-screen bg-cream text-ink">
       <Navbar />
       <main>{children}</main>
       <Footer />

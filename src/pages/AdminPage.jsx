@@ -36,7 +36,7 @@ function InstallHelp({ onClose }) {
       <div className="anim-rise relative w-full max-w-md border border-white/10 bg-carbon p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.28em] text-white/35">Mood Panel</p>
+            <p className="text-[9px] uppercase tracking-[0.28em] text-white/35">Shadday Panel</p>
             <h2 className="mt-2 text-lg font-bold tracking-tight">Instalar la app</h2>
           </div>
           <button
@@ -171,7 +171,7 @@ export default function AdminPage() {
       return
     }
     const result = await promptInstall()
-    if (result === 'accepted') notify('Instalando Mood Panel…')
+    if (result === 'accepted') notify('Instalando Shadday Panel…')
     else if (result === 'unavailable') setInstallHelp(true)
   }
 
@@ -235,7 +235,7 @@ export default function AdminPage() {
 
   if (checkingSession) {
     return (
-      <div className="grid min-h-screen place-items-center bg-ink">
+      <div className="grid min-h-screen place-items-center bg-ink text-white">
         <p className="text-[10px] uppercase tracking-[0.24em] text-white/35">Verificando sesión…</p>
       </div>
     )
@@ -243,7 +243,7 @@ export default function AdminPage() {
 
   if (!authed) {
     return (
-      <div className="flex min-h-screen flex-col bg-ink">
+      <div className="flex min-h-screen flex-col bg-ink text-white">
         <div className="flex items-center justify-between px-5 py-5 sm:px-8">
           <Logo className="h-9 w-auto" />
           <button
@@ -336,7 +336,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={busy}
-                  className="mt-6 w-full bg-white px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.22em] text-ink transition hover:bg-white/90 disabled:cursor-not-allowed disabled:bg-white/40"
+                  className="mt-6 w-full bg-brand px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.22em] text-ink transition hover:bg-brand-deep disabled:cursor-not-allowed disabled:bg-brand/40"
                 >
                   {busy ? 'Ingresando…' : 'Entrar al panel'}
                 </button>
@@ -371,7 +371,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-ink">
+    <div className="min-h-screen bg-ink text-white">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
@@ -383,7 +383,7 @@ export default function AdminPage() {
 
           <div className="flex items-center gap-2">
             <span className="mr-1 hidden items-center gap-1.5 text-[9px] uppercase tracking-[0.14em] text-white/25 sm:flex">
-              <span className="size-1.5 rounded-full bg-white/50" />
+              <span className="size-1.5 rounded-full bg-brand" />
               Supabase
             </span>
             <button
@@ -418,7 +418,7 @@ export default function AdminPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-[9px] uppercase tracking-[0.3em] text-white/30">
-              Mood Indumentaria
+              Shadday Indumentaria
             </p>
             <h1 className="mt-2 text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
               Administrá tu tienda

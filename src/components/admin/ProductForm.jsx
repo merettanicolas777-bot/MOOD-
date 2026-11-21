@@ -137,7 +137,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
   }
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/75 backdrop-blur-sm sm:p-6">
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/75 text-white backdrop-blur-sm sm:p-6">
       <form
         onSubmit={handleSubmit}
         className="anim-rise relative mx-auto w-full max-w-3xl border-white/10 bg-carbon sm:my-2 sm:rounded-2xl sm:border"
@@ -167,7 +167,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
             <input
               value={form.name}
               onChange={(event) => update({ name: event.target.value })}
-              placeholder="Ej: Remera Oversize Off Black"
+              placeholder="Ej: Vestido Knit Arena"
               className="field mt-2"
             />
             {errors.name && <p className="mt-1.5 text-[11px] text-white/70">{errors.name}</p>}
@@ -245,7 +245,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
             <input
               value={form.fit}
               onChange={(event) => update({ fit: event.target.value })}
-              placeholder="Oversize · Hombros caídos"
+              placeholder="Calce al cuerpo · Midi"
               className="field mt-2"
             />
           </div>
