@@ -10,6 +10,9 @@ const STATUSES = [
   { id: 'destacado', label: 'Destacado', hint: 'Con badge en la tienda' },
 ]
 
+const LABEL = 'text-[10px] font-semibold uppercase tracking-[0.18em] text-muted'
+const ERROR = 'mt-1.5 text-[11px] font-medium text-ink'
+
 export default function ProductForm({ product, categories, onClose, onSubmit, notify }) {
   const [form, setForm] = useState(() => ({
     name: product?.name || '',
@@ -137,22 +140,22 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
   }
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/75 text-white backdrop-blur-sm sm:p-6">
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-ink/40 backdrop-blur-sm sm:p-6">
       <form
         onSubmit={handleSubmit}
-        className="anim-rise relative mx-auto w-full max-w-3xl border-white/10 bg-carbon sm:my-2 sm:rounded-2xl sm:border"
+        className="anim-rise relative mx-auto w-full max-w-3xl bg-white text-ink sm:my-2 sm:rounded-2xl sm:border sm:border-line sm:shadow-xl"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-white/10 bg-carbon/95 px-5 py-4 backdrop-blur sm:rounded-t-2xl">
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-line bg-white/95 px-5 py-4 backdrop-blur sm:rounded-t-2xl">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.28em] text-white/35">Catálogo</p>
-            <h2 className="mt-1 text-lg font-bold tracking-tight">
+            <p className="text-[9px] uppercase tracking-[0.26em] text-muted">Catálogo</p>
+            <h2 className="mt-1 font-serif text-xl">
               {product ? 'Editar prenda' : 'Nueva prenda'}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="grid size-9 shrink-0 place-items-center border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white"
+            className="grid size-9 shrink-0 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
             aria-label="Cerrar"
           >
             <X size={17} />
@@ -161,26 +164,20 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
 
         <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
           <div className="sm:col-span-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Nombre de la prenda
-            </label>
+            <label className={LABEL}>Nombre de la prenda</label>
             <input
               value={form.name}
               onChange={(event) => update({ name: event.target.value })}
               placeholder="Ej: Vestido Knit Arena"
               className="field mt-2"
             />
-            {errors.name && <p className="mt-1.5 text-[11px] text-white/70">{errors.name}</p>}
+            {errors.name && <p className={ERROR}>{errors.name}</p>}
           </div>
 
           <div>
-            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Precio (ARS)
-            </label>
+            <label className={LABEL}>Precio (ARS)</label>
             <div className="relative mt-2">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-white/35">
-                $
-              </span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted">$</span>
               <input
                 value={form.price}
                 onChange={(event) => update({ price: event.target.value.replace(/[^\d]/g, '') })}
@@ -189,13 +186,11 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                 className="field pl-7"
               />
             </div>
-            {errors.price && <p className="mt-1.5 text-[11px] text-white/70">{errors.price}</p>}
+            {errors.price && <p className={ERROR}>{errors.price}</p>}
           </div>
 
           <div>
-            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Categoría
-            </label>
+            <label className={LABEL}>Categoría</label>
             <select
               value={form.category}
               onChange={(event) => update({ category: event.target.value })}
@@ -208,15 +203,11 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                 </option>
               ))}
             </select>
-            {errors.category && (
-              <p className="mt-1.5 text-[11px] text-white/70">{errors.category}</p>
-            )}
+            {errors.category && <p className={ERROR}>{errors.category}</p>}
           </div>
 
           <div className="sm:col-span-2">
-            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Descripción breve
-            </label>
+            <label className={LABEL}>Descripción breve</label>
             <textarea
               value={form.description}
               onChange={(event) => update({ description: event.target.value })}
@@ -227,9 +218,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
           </div>
 
           <div>
-            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Tela
-            </label>
+            <label className={LABEL}>Tela</label>
             <input
               value={form.fabric}
               onChange={(event) => update({ fabric: event.target.value })}
@@ -239,9 +228,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
           </div>
 
           <div>
-            <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Calce
-            </label>
+            <label className={LABEL}>Calce</label>
             <input
               value={form.fit}
               onChange={(event) => update({ fit: event.target.value })}
@@ -251,9 +238,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
           </div>
 
           <div className="sm:col-span-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Talles disponibles
-            </p>
+            <p className={LABEL}>Talles disponibles</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {ALL_SIZES.map((size) => {
                 const active = form.sizes.includes(size)
@@ -263,10 +248,10 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                     type="button"
                     onClick={() => toggleSize(size)}
                     className={cn(
-                      'min-w-12 border px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition',
+                      'min-w-12 rounded-full border px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition',
                       active
-                        ? 'border-white bg-white text-ink'
-                        : 'border-white/15 text-white/55 hover:border-white/40 hover:text-white',
+                        ? 'border-ink bg-ink text-cream'
+                        : 'border-line text-muted hover:border-ink/40 hover:text-ink',
                     )}
                     aria-pressed={active}
                   >
@@ -275,13 +260,11 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                 )
               })}
             </div>
-            {errors.sizes && <p className="mt-1.5 text-[11px] text-white/70">{errors.sizes}</p>}
+            {errors.sizes && <p className={ERROR}>{errors.sizes}</p>}
           </div>
 
           <div className="sm:col-span-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-              Estado
-            </p>
+            <p className={LABEL}>Estado</p>
             <div className="mt-2 grid gap-2 sm:grid-cols-3">
               {STATUSES.map((option) => {
                 const active = status === option.id
@@ -291,8 +274,10 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                     type="button"
                     onClick={() => handleStatus(option.id)}
                     className={cn(
-                      'border px-3 py-3 text-left transition',
-                      active ? 'border-white bg-white/[0.06]' : 'border-white/12 hover:border-white/30',
+                      'rounded-xl border px-3 py-3 text-left transition',
+                      active
+                        ? 'border-ink bg-brand/25'
+                        : 'border-line hover:border-ink/40 hover:bg-cream',
                     )}
                     aria-pressed={active}
                   >
@@ -300,23 +285,23 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                       <span
                         className={cn(
                           'grid size-3 place-items-center rounded-full border',
-                          active ? 'border-white' : 'border-white/40',
+                          active ? 'border-ink' : 'border-muted/50',
                         )}
                       >
-                        {active && <span className="size-1.5 rounded-full bg-white" />}
+                        {active && <span className="size-1.5 rounded-full bg-ink" />}
                       </span>
                       {option.label}
                     </span>
-                    <span className="mt-1 block pl-5 text-[10px] text-white/35">{option.hint}</span>
+                    <span className="mt-1 block pl-5 text-[10px] text-muted">{option.hint}</span>
                   </button>
                 )
               })}
             </div>
 
-            <label className="mt-3 flex cursor-pointer items-center justify-between border border-white/12 px-3 py-3">
+            <label className="mt-3 flex cursor-pointer items-center justify-between rounded-xl border border-line px-3 py-3">
               <span>
                 <span className="block text-[11px] font-semibold">Nuevo ingreso</span>
-                <span className="mt-0.5 block text-[10px] text-white/35">
+                <span className="mt-0.5 block text-[10px] text-muted">
                   Muestra el badge “Nuevo” en la tienda
                 </span>
               </span>
@@ -325,7 +310,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                 aria-checked={form.isNew}
                 className={cn(
                   'relative h-6 w-11 rounded-full border transition',
-                  form.isNew ? 'border-white bg-white' : 'border-white/25 bg-transparent',
+                  form.isNew ? 'border-ink bg-brand' : 'border-line bg-mist',
                 )}
                 onClick={(event) => {
                   event.preventDefault()
@@ -335,7 +320,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                 <span
                   className={cn(
                     'absolute top-1/2 size-4 -translate-y-1/2 rounded-full transition-all',
-                    form.isNew ? 'left-6 bg-ink' : 'left-1 bg-white/60',
+                    form.isNew ? 'left-6 bg-ink' : 'left-1 bg-muted/60',
                   )}
                 />
               </span>
@@ -344,11 +329,11 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
 
           <div className="sm:col-span-2">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
-                Fotos <span className="text-white/25">(hasta 3)</span>
+              <p className={LABEL}>
+                Fotos <span className="text-muted/60">(hasta 3)</span>
               </p>
               {uploading && (
-                <span className="inline-flex items-center gap-1.5 text-[10px] text-white/50">
+                <span className="inline-flex items-center gap-1.5 text-[10px] text-muted">
                   <Loader2 size={12} className="animate-spin" /> Subiendo…
                 </span>
               )}
@@ -358,18 +343,18 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
               {form.images.map((image, index) => (
                 <div
                   key={image.slice(0, 40) + index}
-                  className="relative aspect-[3/4] overflow-hidden border border-white/12 bg-black/30"
+                  className="relative aspect-[3/4] overflow-hidden rounded-xl border border-line bg-mist"
                 >
                   <img src={image} alt={`Foto ${index + 1}`} className="h-full w-full object-cover" />
                   {index === 0 && (
-                    <span className="absolute left-1.5 top-1.5 bg-white px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-ink">
+                    <span className="absolute left-1.5 top-1.5 rounded-full bg-brand px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-ink">
                       Principal
                     </span>
                   )}
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-black/70 text-white backdrop-blur transition hover:bg-white hover:text-ink"
+                    className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-ink/70 text-white backdrop-blur transition hover:bg-ink"
                     aria-label="Quitar foto"
                   >
                     <X size={12} />
@@ -390,11 +375,11 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                     addFiles(event.dataTransfer.files)
                   }}
                   className={cn(
-                    'aspect-[3/4] border border-dashed transition',
-                    dragging ? 'border-white bg-white/10' : 'border-white/20 bg-black/20',
+                    'aspect-[3/4] rounded-xl border border-dashed transition',
+                    dragging ? 'border-ink bg-brand/20' : 'border-ink/20 bg-cream',
                   )}
                 >
-                  <label className="flex h-full cursor-pointer flex-col items-center justify-center gap-2 px-2 text-center text-white/40 transition hover:text-white">
+                  <label className="flex h-full cursor-pointer flex-col items-center justify-center gap-2 px-2 text-center text-muted transition hover:text-ink">
                     <input
                       ref={fileRef}
                       type="file"
@@ -404,13 +389,11 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
                       onChange={(event) => addFiles(event.target.files)}
                       disabled={uploading}
                     />
-                    <Upload size={18} strokeWidth={1.6} />
+                    <Upload size={18} strokeWidth={1.7} />
                     <span className="text-[9px] font-semibold uppercase leading-tight tracking-wider">
                       Subir foto
                     </span>
-                    <span className="text-[9px] leading-tight text-white/25">
-                      Galería o PC
-                    </span>
+                    <span className="text-[9px] leading-tight text-muted/70">Galería o PC</span>
                   </label>
                 </div>
               )}
@@ -418,10 +401,7 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
 
             <div className="mt-2 flex gap-2">
               <div className="relative flex-1">
-                <Link2
-                  size={14}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
-                />
+                <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                 <input
                   value={urlInput}
                   onChange={(event) => setUrlInput(event.target.value)}
@@ -438,28 +418,28 @@ export default function ProductForm({ product, categories, onClose, onSubmit, no
               <button
                 type="button"
                 onClick={addUrl}
-                className="inline-flex shrink-0 items-center gap-1.5 border border-white/15 px-3 text-[10px] font-semibold uppercase tracking-wider text-white/70 transition hover:border-white/40 hover:text-white"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-3 text-[10px] font-semibold uppercase tracking-wider text-muted transition hover:border-ink hover:text-ink"
               >
                 <ImagePlus size={14} /> Agregar
               </button>
             </div>
-            {errors.images && <p className="mt-1.5 text-[11px] text-white/70">{errors.images}</p>}
+            {errors.images && <p className={ERROR}>{errors.images}</p>}
           </div>
         </div>
 
-        <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-white/10 bg-carbon/95 px-5 py-4 backdrop-blur sm:rounded-b-2xl">
+        <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t border-line bg-white/95 px-5 py-4 backdrop-blur sm:rounded-b-2xl">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/50 transition hover:text-white"
+            className="px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted transition hover:text-ink"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={saving || uploading}
-            className="inline-flex items-center gap-2 bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-ink transition hover:bg-white/90 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-ink/85 disabled:opacity-50"
           >
             {saving && <Loader2 size={13} className="animate-spin" />}
             {product ? 'Guardar cambios' : 'Publicar prenda'}

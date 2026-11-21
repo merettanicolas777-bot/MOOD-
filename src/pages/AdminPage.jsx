@@ -22,7 +22,7 @@ import { navigate } from '../lib/router'
 import { useInstallPrompt } from '../lib/useInstallPrompt'
 
 const secondaryButton =
-  'inline-flex items-center gap-2 border border-white/15 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/70 transition hover:border-white/40 hover:text-white'
+  'inline-flex items-center gap-2 rounded-full border border-line px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted transition hover:border-ink/40 hover:text-ink'
 
 function InstallHelp({ onClose }) {
   return (
@@ -31,45 +31,45 @@ function InstallHelp({ onClose }) {
         type="button"
         aria-label="Cerrar ayuda de instalación"
         onClick={onClose}
-        className="anim-fade absolute inset-0 cursor-default bg-black/75 backdrop-blur-sm"
+        className="anim-fade absolute inset-0 cursor-default bg-ink/40 backdrop-blur-sm"
       />
-      <div className="anim-rise relative w-full max-w-md border border-white/10 bg-carbon p-6">
+      <div className="anim-rise relative w-full max-w-md rounded-2xl border border-line bg-white p-6 text-ink shadow-xl">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.28em] text-white/35">Shadday Panel</p>
-            <h2 className="mt-2 text-lg font-bold tracking-tight">Instalar la app</h2>
+            <p className="text-[9px] uppercase tracking-[0.28em] text-muted">Shadday Panel</p>
+            <h2 className="mt-2 font-serif text-xl">Instalar la app</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="grid size-8 place-items-center border border-white/15 text-white/60 transition hover:text-white"
+            className="grid size-8 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
             aria-label="Cerrar"
           >
             <X size={15} />
           </button>
         </div>
 
-        <p className="mt-4 text-xs leading-relaxed text-white/50">
+        <p className="mt-4 text-xs leading-relaxed text-muted">
           El navegador todavía no habilitó la instalación automática. Podés agregar el panel a tu
           pantalla de inicio manualmente:
         </p>
 
-        <ul className="mt-4 space-y-3 text-xs leading-relaxed text-white/60">
+        <ul className="mt-4 space-y-3 text-xs leading-relaxed text-muted">
           <li>
-            <span className="font-semibold text-white">Android / Chrome:</span> menú ⋮ → “Instalar
+            <span className="font-semibold text-ink">Android / Chrome:</span> menú ⋮ → “Instalar
             aplicación”.
           </li>
           <li>
-            <span className="font-semibold text-white">iPhone / Safari:</span> botón Compartir →
+            <span className="font-semibold text-ink">iPhone / Safari:</span> botón Compartir →
             “Agregar a pantalla de inicio”.
           </li>
           <li>
-            <span className="font-semibold text-white">PC:</span> ícono de instalar en la barra de
+            <span className="font-semibold text-ink">PC:</span> ícono de instalar en la barra de
             direcciones.
           </li>
         </ul>
 
-        <p className="mt-4 border-t border-white/10 pt-4 text-[10px] leading-relaxed text-white/30">
+        <p className="mt-4 border-t border-line pt-4 text-[10px] leading-relaxed text-muted">
           Para que el navegador habilite la instalación, abrí esta página desde el celular y con
           HTTPS (o localhost).
         </p>
@@ -77,7 +77,7 @@ function InstallHelp({ onClose }) {
         <button
           type="button"
           onClick={onClose}
-          className="mt-5 w-full bg-white px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-ink transition hover:bg-white/90"
+          className="mt-5 w-full rounded-full bg-ink px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-ink/85"
         >
           Entendido
         </button>
@@ -89,15 +89,15 @@ function InstallHelp({ onClose }) {
 function SupabaseAlert({ error, onRetry }) {
   if (!error) return null
   return (
-    <div className="mt-4 border border-white/25 bg-white/5 p-4 text-left">
-      <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white">
+    <div className="mt-4 rounded-2xl border border-brand bg-brand/20 p-4 text-left text-ink">
+      <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em]">
         <TriangleAlert size={13} /> No se pudo conectar con Supabase
       </p>
-      <p className="mt-2 text-[11px] leading-relaxed text-white/55">{error}</p>
+      <p className="mt-2 text-[11px] leading-relaxed text-ink/70">{error}</p>
       <button
         type="button"
         onClick={onRetry}
-        className="mt-3 border border-white/25 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-white transition hover:border-white hover:bg-white hover:text-ink"
+        className="mt-3 rounded-full border border-ink/25 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.16em] transition hover:bg-ink hover:text-white"
       >
         Reintentar
       </button>
@@ -117,8 +117,8 @@ export default function AdminPage() {
     notify,
   } = useStore()
   const { installed, promptInstall } = useInstallPrompt()
-  const [authed, setAuthed] = useState(false)
-  const [checkingSession, setCheckingSession] = useState(true)
+  const [authed, setAuthed] = useState(true)
+  const [checkingSession, setCheckingSession] = useState(false)
   const [busy, setBusy] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -235,21 +235,27 @@ export default function AdminPage() {
 
   if (checkingSession) {
     return (
-      <div className="grid min-h-screen place-items-center bg-ink text-white">
-        <p className="text-[10px] uppercase tracking-[0.24em] text-white/35">Verificando sesión…</p>
+      <div className="grid min-h-screen place-items-center bg-cream text-ink">
+        <p className="text-[10px] uppercase tracking-[0.24em] text-muted">Verificando sesión…</p>
       </div>
     )
   }
 
   if (!authed) {
     return (
-      <div className="flex min-h-screen flex-col bg-ink text-white">
+      <div className="flex min-h-screen flex-col bg-cream text-ink">
         <div className="flex items-center justify-between px-5 py-5 sm:px-8">
-          <Logo className="h-9 w-auto" />
+          <div className="flex items-center gap-2.5">
+            <Logo className="h-11 w-11" />
+            <span className="hidden flex-col leading-none sm:flex">
+              <span className="font-serif text-base tracking-[0.16em]">SHADDAY</span>
+              <span className="mt-1 text-[8px] uppercase tracking-[0.3em] text-muted">Panel</span>
+            </span>
+          </div>
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="text-[10px] uppercase tracking-[0.18em] text-white/40 transition hover:text-white"
+            className="text-[10px] uppercase tracking-[0.18em] text-muted transition hover:text-ink"
           >
             Volver a la tienda
           </button>
@@ -257,12 +263,12 @@ export default function AdminPage() {
 
         <div className="flex flex-1 items-center justify-center px-5 pb-16">
           <div className="w-full max-w-sm">
-            <div className="border border-white/10 bg-carbon p-6 sm:p-8">
-              <p className="text-[9px] uppercase tracking-[0.3em] text-white/35">Acceso interno</p>
-              <h1 className="mt-3 text-2xl font-extrabold uppercase tracking-tight">
+            <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:p-8">
+              <p className="text-[9px] uppercase tracking-[0.3em] text-muted">Acceso interno</p>
+              <h1 className="mt-3 font-serif text-2xl leading-tight sm:text-3xl">
                 Panel de administración
               </h1>
-              <p className="mt-2 text-xs leading-relaxed text-white/40">
+              <p className="mt-2 text-xs leading-relaxed text-muted">
                 Ingresá con tu usuario admin de Supabase para administrar prendas, fotos y
                 categorías.
               </p>
@@ -270,14 +276,14 @@ export default function AdminPage() {
               <form onSubmit={handleLogin} className="mt-7">
                 <label
                   htmlFor="admin-email"
-                  className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45"
+                  className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted"
                 >
                   Correo
                 </label>
                 <div className="relative mt-2">
                   <Mail
                     size={15}
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                   />
                   <input
                     id="admin-email"
@@ -296,14 +302,14 @@ export default function AdminPage() {
 
                 <label
                   htmlFor="admin-password"
-                  className="mt-4 block text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45"
+                  className="mt-4 block text-[10px] font-semibold uppercase tracking-[0.2em] text-muted"
                 >
                   Contraseña
                 </label>
                 <div className="relative mt-2">
                   <Lock
                     size={15}
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
                   />
                   <input
                     id="admin-password"
@@ -320,7 +326,7 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((value) => !value)}
-                    className="absolute right-1 top-1/2 grid size-9 -translate-y-1/2 place-items-center text-white/35 transition hover:text-white"
+                    className="absolute right-1 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-muted transition hover:text-ink"
                     aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -328,7 +334,7 @@ export default function AdminPage() {
                 </div>
 
                 {loginError && (
-                  <p className="anim-shake mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-white/80">
+                  <p className="anim-shake mt-3 flex items-start gap-2 rounded-xl bg-brand/20 px-3 py-2 text-[11px] leading-relaxed text-ink">
                     <TriangleAlert size={13} className="mt-0.5 shrink-0" /> {loginError}
                   </p>
                 )}
@@ -336,7 +342,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={busy}
-                  className="mt-6 w-full bg-brand px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.22em] text-ink transition hover:bg-brand-deep disabled:cursor-not-allowed disabled:bg-brand/40"
+                  className="mt-6 w-full rounded-full bg-ink px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-ink/85 disabled:cursor-not-allowed disabled:bg-ink/40"
                 >
                   {busy ? 'Ingresando…' : 'Entrar al panel'}
                 </button>
@@ -344,7 +350,7 @@ export default function AdminPage() {
                 <button
                   type="button"
                   onClick={handleInstall}
-                  className="mt-2.5 flex w-full items-center justify-center gap-2 border border-white/15 px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:border-white/40 hover:text-white"
+                  className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-full border border-line px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted transition hover:border-ink/40 hover:text-ink"
                 >
                   {installed ? <Check size={14} /> : <Download size={14} />}
                   {installed ? 'App instalada' : 'Instalar app del panel'}
@@ -353,14 +359,15 @@ export default function AdminPage() {
 
               <SupabaseAlert error={error} onRetry={() => refresh()} />
 
-              <p className="mt-5 border-t border-white/10 pt-4 text-[10px] leading-relaxed text-white/30">
+              <p className="mt-5 border-t border-line pt-4 text-[10px] leading-relaxed text-muted">
                 El acceso usa los usuarios de Supabase (Authentication → Users). El usuario tiene
-                que estar en la tabla <code className="text-white/50">admins</code> para entrar.
+                que estar en la tabla{' '}
+                <code className="rounded bg-mist px-1 py-0.5 text-ink/80">admins</code> para entrar.
               </p>
             </div>
 
-            <p className="mt-5 text-center text-[10px] uppercase tracking-[0.16em] text-white/20">
-              Datos guardados en Supabase
+            <p className="mt-5 text-center text-[10px] uppercase tracking-[0.18em] text-muted/70">
+              Shadday Indumentaria · Resistencia
             </p>
           </div>
         </div>
@@ -371,18 +378,18 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-ink text-white">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
+    <div className="min-h-screen bg-cream text-ink">
+      <header className="sticky top-0 z-40 border-b border-line bg-cream/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <Logo className="h-7 w-auto" />
-            <span className="hidden border-l border-white/15 pl-3 text-[9px] uppercase tracking-[0.24em] text-white/40 sm:inline">
+            <Logo className="h-9 w-9" />
+            <span className="hidden border-l border-line pl-3 text-[9px] uppercase tracking-[0.24em] text-muted sm:inline">
               Panel
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="mr-1 hidden items-center gap-1.5 text-[9px] uppercase tracking-[0.14em] text-white/25 sm:flex">
+            <span className="mr-1 hidden items-center gap-1.5 text-[9px] uppercase tracking-[0.14em] text-muted sm:flex">
               <span className="size-1.5 rounded-full bg-brand" />
               Supabase
             </span>
@@ -393,13 +400,9 @@ export default function AdminPage() {
               title="Instalar la app del panel"
             >
               {installed ? <Check size={13} /> : <Download size={13} />}
-              <span>{installed ? 'App instalada' : 'Instalar app'}</span>
+              <span className="hidden sm:inline">{installed ? 'App instalada' : 'Instalar app'}</span>
             </button>
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className={secondaryButton}
-            >
+            <button type="button" onClick={() => navigate('/')} className={secondaryButton}>
               <Store size={13} /> <span className="hidden sm:inline">Ver tienda</span>
             </button>
             <button
@@ -417,21 +420,21 @@ export default function AdminPage() {
       <main className="mx-auto max-w-6xl px-4 pb-24 pt-7 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.3em] text-white/30">
+            <p className="text-[9px] uppercase tracking-[0.3em] text-muted">
               Shadday Indumentaria
             </p>
-            <h1 className="mt-2 text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
+            <h1 className="mt-2 font-serif text-3xl leading-tight sm:text-4xl">
               Administrá tu tienda
             </h1>
           </div>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-white/25">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-muted">
             {products.length} prendas · {categories.length} categorías
           </p>
         </div>
 
         <SupabaseAlert error={error} onRetry={() => refresh()} />
 
-        <div className="mt-7 flex gap-1 border-b border-white/10">
+        <div className="mt-7 flex gap-1 border-b border-line">
           {[
             { id: 'productos', label: 'Productos' },
             { id: 'categorias', label: 'Categorías' },
@@ -441,10 +444,10 @@ export default function AdminPage() {
               type="button"
               onClick={() => setTab(item.id)}
               className={cn(
-                'border-b-2 px-4 pb-3 pt-2 text-[10px] font-semibold uppercase tracking-[0.2em] transition',
+                'border-b-2 px-4 pb-3 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] transition',
                 tab === item.id
-                  ? 'border-white text-white'
-                  : 'border-transparent text-white/35 hover:text-white/70',
+                  ? 'border-brand text-ink'
+                  : 'border-transparent text-muted hover:text-ink',
               )}
             >
               {item.label}
@@ -461,7 +464,7 @@ export default function AdminPage() {
         </div>
 
         {loading && (
-          <p className="mt-6 text-[10px] uppercase tracking-[0.16em] text-white/30">
+          <p className="mt-6 text-[10px] uppercase tracking-[0.16em] text-muted">
             Sincronizando catálogo…
           </p>
         )}

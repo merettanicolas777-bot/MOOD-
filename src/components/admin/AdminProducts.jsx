@@ -28,7 +28,7 @@ function PriceCell({ product }) {
 
   return (
     <div className="relative">
-      <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] text-white/30">
+      <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] text-muted">
         $
       </span>
       <input
@@ -41,7 +41,7 @@ function PriceCell({ product }) {
         inputMode="numeric"
         aria-label={`Precio de ${product.name}`}
         className={cn(
-          'w-24 border border-white/10 bg-black/25 py-2 pl-6 pr-2 text-[13px] tabular-nums text-white outline-none transition focus:border-white/40',
+          'w-24 rounded-full border border-line bg-white py-2 pl-6 pr-2 text-[13px] tabular-nums text-ink outline-none transition focus:border-ink',
           saving && 'opacity-50',
         )}
       />
@@ -92,10 +92,7 @@ export default function AdminProducts({ onEdit, onCreate }) {
     <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <Search
-            size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
-          />
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
@@ -105,38 +102,38 @@ export default function AdminProducts({ onEdit, onCreate }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+          <span className="text-[10px] uppercase tracking-[0.16em] text-muted">
             {filtered.length} de {products.length}
           </span>
           <button
             type="button"
             onClick={onCreate}
-            className="inline-flex items-center gap-2 bg-white px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-ink transition hover:bg-white/90"
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-ink/85"
           >
             <Plus size={14} /> Nueva prenda
           </button>
         </div>
       </div>
 
-      <div className="mt-5 overflow-hidden border border-white/10 bg-carbon">
+      <div className="mt-5 overflow-hidden rounded-2xl border border-line bg-white">
         {loading ? (
           <div className="space-y-3 p-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="flex animate-pulse items-center gap-4">
-                <div className="h-16 w-13 bg-white/5" />
+                <div className="h-16 w-13 rounded-lg bg-mist" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-3 w-1/2 bg-white/5" />
-                  <div className="h-3 w-1/4 bg-white/5" />
+                  <div className="h-3 w-1/2 rounded bg-mist" />
+                  <div className="h-3 w-1/4 rounded bg-mist" />
                 </div>
               </div>
             ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className="px-6 py-16 text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em]">
+            <p className="font-serif text-lg">
               {products.length ? 'Sin resultados' : 'Todavía no hay prendas'}
             </p>
-            <p className="mx-auto mt-2 max-w-xs text-xs leading-relaxed text-white/40">
+            <p className="mx-auto mt-2 max-w-xs text-xs leading-relaxed text-muted">
               {products.length
                 ? 'Probá con otro nombre o categoría.'
                 : 'Publicá tu primera prenda para que aparezca en la tienda.'}
@@ -145,14 +142,14 @@ export default function AdminProducts({ onEdit, onCreate }) {
               <button
                 type="button"
                 onClick={onCreate}
-                className="mt-5 bg-white px-5 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-ink"
+                className="mt-5 rounded-full bg-ink px-5 py-3 text-[10px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-ink/85"
               >
                 Agregar prenda
               </button>
             )}
           </div>
         ) : (
-          <ul className="divide-y divide-white/8">
+          <ul className="divide-y divide-line">
             {filtered.map((product) => (
               <li
                 key={product.id}
@@ -162,7 +159,7 @@ export default function AdminProducts({ onEdit, onCreate }) {
                 )}
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3.5">
-                  <div className="h-20 w-16 shrink-0 overflow-hidden bg-black/40">
+                  <div className="h-20 w-16 shrink-0 overflow-hidden rounded-lg bg-mist">
                     {product.images?.[0] ? (
                       <img
                         src={product.images[0]}
@@ -170,29 +167,29 @@ export default function AdminProducts({ onEdit, onCreate }) {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="grid h-full w-full place-items-center text-[8px] uppercase tracking-wider text-white/25">
+                      <div className="grid h-full w-full place-items-center text-[8px] uppercase tracking-wider text-muted">
                         Sin foto
                       </div>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">{product.name}</p>
-                    <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] uppercase tracking-[0.12em] text-white/35">
+                    <p className="truncate font-serif text-[15px] leading-snug">{product.name}</p>
+                    <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] uppercase tracking-[0.1em] text-muted">
                       <span>{product.category}</span>
-                      <span className="size-0.5 rounded-full bg-white/30" />
+                      <span className="size-0.5 rounded-full bg-muted/50" />
                       <span>{product.sizes.join(' · ')}</span>
                       {product.featured && (
-                        <span className="border border-white/20 px-1.5 py-0.5 text-[8px] text-white/60">
+                        <span className="rounded-full border border-line px-1.5 py-0.5 text-[8px] text-muted">
                           Destacado
                         </span>
                       )}
                       {product.isNew && (
-                        <span className="border border-white/20 px-1.5 py-0.5 text-[8px] text-white/60">
+                        <span className="rounded-full bg-brand/40 px-1.5 py-0.5 text-[8px] text-ink">
                           Nuevo
                         </span>
                       )}
                     </p>
-                    <p className="mt-1 text-[11px] tabular-nums text-white/45 sm:hidden">
+                    <p className="mt-1 text-[11px] tabular-nums text-muted sm:hidden">
                       {formatPrice(product.price)}
                     </p>
                   </div>
@@ -207,10 +204,10 @@ export default function AdminProducts({ onEdit, onCreate }) {
                     type="button"
                     onClick={() => toggleStock(product)}
                     className={cn(
-                      'inline-flex items-center gap-2 border px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.14em] transition',
+                      'inline-flex items-center gap-2 rounded-full border px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.12em] transition',
                       product.inStock
-                        ? 'border-white/25 text-white hover:border-white'
-                        : 'border-white/10 text-white/35 hover:border-white/30 hover:text-white/70',
+                        ? 'border-ink bg-brand/30 text-ink hover:bg-brand/50'
+                        : 'border-line text-muted hover:border-ink/30 hover:text-ink',
                     )}
                     aria-pressed={product.inStock}
                     title="Activar / desactivar stock"
@@ -218,7 +215,7 @@ export default function AdminProducts({ onEdit, onCreate }) {
                     <span
                       className={cn(
                         'size-1.5 rounded-full',
-                        product.inStock ? 'bg-white' : 'bg-white/25',
+                        product.inStock ? 'bg-ink' : 'bg-muted/40',
                       )}
                     />
                     {product.inStock ? 'Disponible' : 'Agotado'}
@@ -231,7 +228,7 @@ export default function AdminProducts({ onEdit, onCreate }) {
                   <button
                     type="button"
                     onClick={() => onEdit(product)}
-                    className="grid size-9 place-items-center border border-white/12 text-white/60 transition hover:border-white/40 hover:text-white"
+                    className="grid size-9 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
                     aria-label={`Editar ${product.name}`}
                   >
                     <Pencil size={14} strokeWidth={1.7} />
@@ -239,7 +236,7 @@ export default function AdminProducts({ onEdit, onCreate }) {
                   <button
                     type="button"
                     onClick={() => remove(product)}
-                    className="grid size-9 place-items-center border border-white/12 text-white/60 transition hover:border-white hover:bg-white hover:text-ink"
+                    className="grid size-9 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:bg-ink hover:text-white"
                     aria-label={`Eliminar ${product.name}`}
                   >
                     {busyId === product.id ? (
@@ -255,7 +252,7 @@ export default function AdminProducts({ onEdit, onCreate }) {
         )}
       </div>
 
-      <p className="mt-3 text-[10px] leading-relaxed text-white/25">
+      <p className="mt-3 text-[10px] leading-relaxed text-muted">
         Tip: tocá el precio y escribí el nuevo valor, se guarda solo al salir del campo. El estado
         de stock se cambia con un clic.
       </p>

@@ -162,13 +162,13 @@
   filter: grayscale(0.35) contrast(1.02);
 }
 
-/* --- Inputs del panel (tema oscuro) --- */
+/* --- Inputs del panel --- */
 @layer components {
   .field {
-    @apply w-full rounded-lg border border-white/12 bg-black/30 px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/25;
+    @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-muted/50;
   }
   .field:focus {
-    @apply border-white/45 bg-black/45;
+    @apply border-ink/60 bg-white;
   }
 }
 
