@@ -18,6 +18,8 @@ export default function Catalog() {
     products,
     categories,
     loading,
+    error,
+    refresh,
     search,
     setSearch,
     newOnly,
@@ -196,6 +198,20 @@ export default function Catalog() {
                 <div className="mt-2 h-3 w-1/3 bg-mist" />
               </div>
             ))}
+          </div>
+        ) : error && !products.length ? (
+          <div className="mt-12 flex flex-col items-center border border-dashed border-ink/20 px-6 py-16 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em]">
+              No pudimos cargar el catálogo
+            </p>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-ink/50">{error}</p>
+            <button
+              type="button"
+              onClick={() => refresh()}
+              className="mt-6 bg-ink px-6 py-3 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition hover:bg-carbon"
+            >
+              Reintentar
+            </button>
           </div>
         ) : filtered.length ? (
           <div className="mt-9 grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-5 sm:gap-y-12 lg:grid-cols-3 xl:grid-cols-4">

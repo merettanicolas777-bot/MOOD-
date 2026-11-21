@@ -93,9 +93,36 @@ function InstallHelp({ onClose }) {
   )
 }
 
+function SupabaseAlert({ error, onRetry }) {
+  if (!error) return null
+  return (
+    <div className="mt-4 border border-white/25 bg-white/5 p-4 text-left">
+      <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white">
+        <TriangleAlert size={13} /> No se pudo conectar con Supabase
+      </p>
+      <p className="mt-2 text-[11px] leading-relaxed text-white/55">{error}</p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="mt-3 border border-white/25 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-white transition hover:border-white hover:bg-white hover:text-ink"
+      >
+        Reintentar
+      </button>
+    </div>
+  )
+}
+
 export default function AdminPage() {
-  const { products, categories, loading, storageMode, createProduct, updateProduct, notify } =
-    useStore()
+  const {
+    products,
+    categories,
+    loading,
+    error,
+    refresh,
+    createProduct,
+    updateProduct,
+    notify,
+  } = useStore()
   const { installed, promptInstall } = useInstallPrompt()
   const [authed, setAuthed] = useState(() => sessionStorage.getItem(SESSION_KEY) === '1')
   const [email, setEmail] = useState('')
@@ -277,6 +304,8 @@ export default function AdminPage() {
                 </button>
               </form>
 
+              <SupabaseAlert error={error} onRetry={() => refresh()} />
+
               {USING_DEFAULT_CREDENTIALS && (
                 <p className="mt-5 border-t border-white/10 pt-4 text-[10px] leading-relaxed text-white/30">
                   Demo: <span className="font-semibold text-white/60">{ADMIN_EMAIL}</span> ·{' '}
@@ -289,7 +318,7 @@ export default function AdminPage() {
             </div>
 
             <p className="mt-5 text-center text-[10px] uppercase tracking-[0.16em] text-white/20">
-              {storageMode === 'supabase' ? 'Datos en Supabase' : 'Datos guardados en este navegador'}
+              Datos guardados en Supabase
             </p>
           </div>
         </div>
@@ -313,7 +342,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-2">
             <span className="mr-1 hidden items-center gap-1.5 text-[9px] uppercase tracking-[0.14em] text-white/25 sm:flex">
               <span className="size-1.5 rounded-full bg-white/50" />
-              {storageMode === 'supabase' ? 'Supabase' : 'Local'}
+              Supabase
             </span>
             <button
               type="button"
@@ -357,6 +386,8 @@ export default function AdminPage() {
             {products.length} prendas · {categories.length} categorías
           </p>
         </div>
+
+        <SupabaseAlert error={error} onRetry={() => refresh()} />
 
         <div className="mt-7 flex gap-1 border-b border-white/10">
           {[

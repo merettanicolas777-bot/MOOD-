@@ -1,31 +1,38 @@
-// Capa de datos de Mood Indumentaria.
-//
-// - Con VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY configuradas, todo se guarda
-//   en Supabase (tabla `products` y bucket `product-images`).
-// - Sin credenciales, funciona 100% con localStorage para que la demo arranque
-//   sola. La interfaz pública es la misma en ambos modos.
+// Capa de datos de Mood Indumentaria: todo el catálogo vive en Supabase
+// (tabla `products`, tabla `categories` y bucket `product-images`).
 import { SEED_CATEGORIES, SEED_PRODUCTS } from '../data/seed'
-import { BUCKET, PRODUCTS_TABLE, getSupabase, isSupabaseEnabled } from './supabase'
-import { fileToDataUrl } from './image'
+import { BUCKET, PRODUCTS_TABLE, getSupabase } from './supabase'
 
-const PRODUCTS_KEY = 'mood:products:v1'
-const CATEGORIES_KEY = 'mood:categories:v1'
+export const storageMode = 'supabase'
 
-export const storageMode = isSupabaseEnabled ? 'supabase' : 'local'
+const SETUP_HINT =
+  'Supabase rechazó la operación por permisos. Abrí el SQL Editor del proyecto y ejecutá el archivo supabase/schema.sql.'
 
-function readLocal(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key)
-    if (!raw) return fallback
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : fallback
-  } catch {
-    return fallback
+export function toMessage(error) {
+  const message = error?.message || String(error || '')
+  if (/permission denied|42501|row-level security|violates row-level/i.test(message)) {
+    return SETUP_HINT
   }
+  if (/does not exist|42P01|schema cache/i.test(message)) {
+    return 'Faltan las tablas en Supabase. Ejecutá supabase/schema.sql en el SQL Editor del proyecto.'
+  }
+  if (/No API key|Invalid API key|JWT|401/i.test(message)) {
+    return 'La clave pública de Supabase no es válida. Revisá VITE_SUPABASE_ANON_KEY.'
+  }
+  if (/Failed to fetch|NetworkError|network|fetch failed/i.test(message)) {
+    return 'No pudimos conectar con Supabase. Revisá la conexión a internet y volvé a intentar.'
+  }
+  return message || 'Error inesperado de Supabase.'
 }
 
-function writeLocal(key, value) {
-  localStorage.setItem(key, JSON.stringify(value))
+async function db() {
+  const supabase = await getSupabase()
+  if (!supabase) {
+    throw new Error(
+      'Falta configurar Supabase. Definí VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.',
+    )
+  }
+  return supabase
 }
 
 function fromRow(row) {
@@ -62,83 +69,43 @@ function toRow(product) {
   }
 }
 
-function seedLocalIfNeeded() {
-  if (!localStorage.getItem(PRODUCTS_KEY)) {
-    writeLocal(PRODUCTS_KEY, SEED_PRODUCTS)
-  }
-  if (!localStorage.getItem(CATEGORIES_KEY)) {
-    writeLocal(CATEGORIES_KEY, SEED_CATEGORIES)
-  }
-}
-
 export async function loadCatalog() {
-  const supabase = await getSupabase()
-
-  if (!supabase) {
-    seedLocalIfNeeded()
-    const products = readLocal(PRODUCTS_KEY, SEED_PRODUCTS)
-    const categories = readLocal(CATEGORIES_KEY, SEED_CATEGORIES)
-    return {
-      products: [...products].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)),
-      categories,
-    }
-  }
+  const supabase = await db()
 
   const [productsRes, categoriesRes] = await Promise.all([
     supabase.from(PRODUCTS_TABLE).select('*').order('created_at', { ascending: false }),
     supabase.from('categories').select('*').order('name', { ascending: true }),
   ])
 
-  if (productsRes.error) throw new Error(productsRes.error.message)
+  if (productsRes.error) throw new Error(toMessage(productsRes.error))
 
   let products = (productsRes.data || []).map(fromRow)
 
+  // Primera vez: cargamos el catálogo inicial en Supabase.
   if (!products.length) {
     const { data, error } = await supabase
       .from(PRODUCTS_TABLE)
       .insert(SEED_PRODUCTS.map(toRow))
       .select()
-    if (error) throw new Error(error.message)
+    if (error) throw new Error(toMessage(error))
     products = (data || []).map(fromRow)
   }
 
   let categories = (categoriesRes.data || []).map((row) => row.name)
+
   if (!categories.length) {
     categories = SEED_CATEGORIES
-    await supabase
+    const { error } = await supabase
       .from('categories')
       .insert(categories.map((name) => ({ name })))
-      .select()
+    if (error && error.code !== '23505') throw new Error(toMessage(error))
   }
 
   return { products, categories }
 }
 
 export async function saveProduct(product) {
-  const supabase = await getSupabase()
-
-  if (!supabase) {
-    seedLocalIfNeeded()
-    const products = readLocal(PRODUCTS_KEY, SEED_PRODUCTS)
-    const existing = product.id ? products.find((p) => p.id === product.id) : null
-
-    if (existing) {
-      const updated = { ...existing, ...product }
-      writeLocal(
-        PRODUCTS_KEY,
-        products.map((p) => (p.id === product.id ? updated : p)),
-      )
-      return updated
-    }
-
-    const created = {
-      ...product,
-      id: product.id || crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    }
-    writeLocal(PRODUCTS_KEY, [created, ...products])
-    return created
-  }
+  const supabase = await db()
 
   if (product.id) {
     const { data, error } = await supabase
@@ -147,7 +114,7 @@ export async function saveProduct(product) {
       .eq('id', product.id)
       .select()
       .single()
-    if (error) throw new Error(error.message)
+    if (error) throw new Error(toMessage(error))
     return fromRow(data)
   }
 
@@ -156,77 +123,48 @@ export async function saveProduct(product) {
     .insert(toRow(product))
     .select()
     .single()
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(toMessage(error))
   return fromRow(data)
 }
 
 export async function deleteProduct(id) {
-  const supabase = await getSupabase()
-
-  if (!supabase) {
-    const products = readLocal(PRODUCTS_KEY, SEED_PRODUCTS)
-    writeLocal(
-      PRODUCTS_KEY,
-      products.filter((p) => p.id !== id),
-    )
-    return
-  }
-
+  const supabase = await db()
   const { error } = await supabase.from(PRODUCTS_TABLE).delete().eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(toMessage(error))
 }
 
 export async function addCategory(name) {
   const clean = String(name || '').trim()
   if (!clean) throw new Error('Escribí un nombre de categoría')
 
-  const supabase = await getSupabase()
-  if (!supabase) {
-    seedLocalIfNeeded()
-    const categories = readLocal(CATEGORIES_KEY, SEED_CATEGORIES)
-    if (categories.some((c) => c.toLowerCase() === clean.toLowerCase())) {
-      throw new Error('Esa categoría ya existe')
-    }
-    writeLocal(CATEGORIES_KEY, [...categories, clean])
-    return [...categories, clean]
-  }
-
+  const supabase = await db()
   const { error } = await supabase.from('categories').insert({ name: clean })
-  if (error) throw new Error(error.message)
+  if (error) {
+    if (error.code === '23505') throw new Error('Esa categoría ya existe')
+    throw new Error(toMessage(error))
+  }
   return clean
 }
 
 export async function removeCategory(name) {
-  const supabase = await getSupabase()
-
-  if (!supabase) {
-    seedLocalIfNeeded()
-    const categories = readLocal(CATEGORIES_KEY, SEED_CATEGORIES)
-    const next = categories.filter((c) => c !== name)
-    writeLocal(CATEGORIES_KEY, next)
-    return next
-  }
-
+  const supabase = await db()
   const { error } = await supabase.from('categories').delete().eq('name', name)
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(toMessage(error))
   return name
 }
 
 export async function uploadImage(file) {
-  const supabase = await getSupabase()
-  const dataUrl = await fileToDataUrl(file)
+  const supabase = await db()
 
-  if (!supabase) return dataUrl
+  const extension = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extension || 'jpg'}`
 
-  const blob = await (await fetch(dataUrl)).blob()
-  const extension = (file.name.split('.').pop() || 'jpg').toLowerCase()
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extension}`
-
-  const { error } = await supabase.storage.from(BUCKET).upload(path, blob, {
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
     contentType: file.type || 'image/jpeg',
     upsert: false,
+    cacheControl: '31536000',
   })
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(toMessage(error))
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path)
   return data.publicUrl
