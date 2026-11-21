@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --color-ink: #0a0a0a;
+  --color-carbon: #141414;
+  --color-graphite: #1c1c1c;
+  --color-mist: #f5f5f5;
+  --color-ash: #a3a3a3;
+  --color-line: #e5e5e5;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-ink font-sans text-white antialiased;
+  }
+
+  ::selection {
+    background: #ffffff;
+    color: #0a0a0a;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+/* --- Título con contorno --- */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.4px #ffffff;
+}
+
+@supports not ((-webkit-text-stroke: 1px #fff)) {
+  .text-outline {
+    color: #ffffff;
+  }
+}
+
+/* --- Scroll --- */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Reveal on scroll --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Marquee --- */
+@keyframes mood-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.animate-marquee {
+  animation: mood-marquee 38s linear infinite;
+}
+
+/* --- Entradas --- */
+@keyframes mood-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mood-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes mood-slide {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes mood-sheet {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.anim-fade {
+  animation: mood-fade 0.3s ease-out both;
+}
+.anim-rise {
+  animation: mood-rise 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.anim-slide {
+  animation: mood-slide 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.anim-sheet {
+  animation: mood-sheet 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mood-shake {
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+  20%,
+  80% {
+    transform: translateX(2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-3px);
+  }
+  40%,
+  60% {
+    transform: translateX(3px);
+  }
+}
+.anim-shake {
+  animation: mood-shake 0.5s ease-in-out both;
+}
+
+/* --- Mapa monocromático --- */
+.map-mono {
+  filter: grayscale(1) invert(0.92) contrast(1.05) brightness(0.95);
+}
+
+/* --- Inputs admin --- */
+@layer components {
+  .field {
+    @apply w-full rounded-lg border border-white/12 bg-black/30 px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/25;
+  }
+  .field:focus {
+    @apply border-white/45 bg-black/45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-marquee {
+    animation: none;
+  }
+  .anim-fade,
+  .anim-rise,
+  .anim-slide,
+  .anim-sheet,
+  .anim-shake {
+    animation: none;
+  }
+}
