@@ -21,9 +21,7 @@ export function getSupabase() {
   if (!isSupabaseEnabled) return Promise.resolve(null)
   if (!clientPromise) {
     clientPromise = import('@supabase/supabase-js').then(({ createClient }) =>
-      createClient(url, anonKey, {
-        auth: { persistSession: false, autoRefreshToken: false },
-      }),
+      createClient(url, anonKey),
     )
   }
   return clientPromise

@@ -81,14 +81,18 @@ export async function loadCatalog() {
 
   let products = (productsRes.data || []).map(fromRow)
 
-  // Primera vez: cargamos el catálogo inicial en Supabase.
+  // Primera vez: cargamos el catálogo inicial. Solo un admin puede escribir,
+  // así que si todavía no hay sesión simplemente mostramos la tienda vacía.
   if (!products.length) {
     const { data, error } = await supabase
       .from(PRODUCTS_TABLE)
       .insert(SEED_PRODUCTS.map(toRow))
       .select()
-    if (error) throw new Error(toMessage(error))
-    products = (data || []).map(fromRow)
+    if (!error) {
+      products = (data || []).map(fromRow)
+    } else if (!/permission denied|row-level security|42501|Unauthorized/i.test(error.message)) {
+      throw new Error(toMessage(error))
+    }
   }
 
   let categories = (categoriesRes.data || []).map((row) => row.name)
@@ -98,7 +102,13 @@ export async function loadCatalog() {
     const { error } = await supabase
       .from('categories')
       .insert(categories.map((name) => ({ name })))
-    if (error && error.code !== '23505') throw new Error(toMessage(error))
+    if (
+      error &&
+      error.code !== '23505' &&
+      !/permission denied|row-level security|42501|Unauthorized/i.test(error.message)
+    ) {
+      throw new Error(toMessage(error))
+    }
   }
 
   return { products, categories }

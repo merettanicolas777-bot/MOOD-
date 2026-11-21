@@ -16,17 +16,10 @@ import AdminProducts from '../components/admin/AdminProducts'
 import AdminCategories from '../components/admin/AdminCategories'
 import ProductForm from '../components/admin/ProductForm'
 import { useStore } from '../context/StoreContext'
+import { checkIsAdmin, getCurrentUser, signIn, signOut } from '../lib/auth'
 import { cn } from '../lib/format'
 import { navigate } from '../lib/router'
 import { useInstallPrompt } from '../lib/useInstallPrompt'
-
-const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL || 'moodindumentaria@gmail.com')
-  .trim()
-  .toLowerCase()
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'mood2026'
-const USING_DEFAULT_CREDENTIALS =
-  !import.meta.env.VITE_ADMIN_EMAIL || !import.meta.env.VITE_ADMIN_PASSWORD
-const SESSION_KEY = 'mood:admin:session'
 
 const secondaryButton =
   'inline-flex items-center gap-2 border border-white/15 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/70 transition hover:border-white/40 hover:text-white'
@@ -124,7 +117,9 @@ export default function AdminPage() {
     notify,
   } = useStore()
   const { installed, promptInstall } = useInstallPrompt()
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem(SESSION_KEY) === '1')
+  const [authed, setAuthed] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
+  const [busy, setBusy] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -141,6 +136,35 @@ export default function AdminPage() {
     }
   }, [])
 
+  // Retomamos la sesión de Supabase si el usuario ya se había logueado.
+  useEffect(() => {
+    let active = true
+
+    const restore = async () => {
+      try {
+        const user = await getCurrentUser()
+        if (!user) return
+        const admin = await checkIsAdmin()
+        if (!active) return
+        if (admin) {
+          setAuthed(true)
+          await refresh()
+        } else {
+          await signOut()
+        }
+      } catch {
+        // Si no se puede verificar, se muestra el login normalmente.
+      } finally {
+        if (active) setCheckingSession(false)
+      }
+    }
+
+    restore()
+    return () => {
+      active = false
+    }
+  }, [refresh])
+
   const handleInstall = async () => {
     if (installed) {
       notify('La app ya está instalada en este dispositivo')
@@ -151,23 +175,37 @@ export default function AdminPage() {
     else if (result === 'unavailable') setInstallHelp(true)
   }
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault()
-    const emailOk = email.trim().toLowerCase() === ADMIN_EMAIL
-    const passwordOk = password === ADMIN_PASSWORD
+    if (busy) return
 
-    if (emailOk && passwordOk) {
-      sessionStorage.setItem(SESSION_KEY, '1')
-      setAuthed(true)
-      setLoginError('')
+    setBusy(true)
+    setLoginError('')
+
+    try {
+      await signIn(email, password)
+
+      const admin = await checkIsAdmin()
+      if (!admin) {
+        await signOut()
+        setLoginError(
+          'Ese usuario no tiene rol de admin. Agregalo a la tabla admins con el SQL de supabase/schema.sql.',
+        )
+        return
+      }
+
+      await refresh()
       setPassword('')
-    } else {
-      setLoginError('Correo o contraseña incorrectos. Revisá los datos e intentá de nuevo.')
+      setAuthed(true)
+    } catch (err) {
+      setLoginError(err.message || 'No pudimos iniciar sesión.')
+    } finally {
+      setBusy(false)
     }
   }
 
-  const handleLogout = () => {
-    sessionStorage.removeItem(SESSION_KEY)
+  const handleLogout = async () => {
+    await signOut()
     setAuthed(false)
     setPassword('')
     setEmail('')
@@ -195,6 +233,14 @@ export default function AdminPage() {
 
   const installOverlay = installHelp ? <InstallHelp onClose={() => setInstallHelp(false)} /> : null
 
+  if (checkingSession) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-ink">
+        <p className="text-[10px] uppercase tracking-[0.24em] text-white/35">Verificando sesión…</p>
+      </div>
+    )
+  }
+
   if (!authed) {
     return (
       <div className="flex min-h-screen flex-col bg-ink">
@@ -217,7 +263,7 @@ export default function AdminPage() {
                 Panel de administración
               </h1>
               <p className="mt-2 text-xs leading-relaxed text-white/40">
-                Ingresá con el correo y la contraseña del local para administrar prendas, fotos y
+                Ingresá con tu usuario admin de Supabase para administrar prendas, fotos y
                 categorías.
               </p>
 
@@ -241,7 +287,7 @@ export default function AdminPage() {
                       setEmail(event.target.value)
                       setLoginError('')
                     }}
-                    placeholder="moodindumentaria@gmail.com"
+                    placeholder="tu@correo.com"
                     autoFocus
                     autoComplete="username"
                     className="field pl-9"
@@ -289,9 +335,10 @@ export default function AdminPage() {
 
                 <button
                   type="submit"
-                  className="mt-6 w-full bg-white px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.22em] text-ink transition hover:bg-white/90"
+                  disabled={busy}
+                  className="mt-6 w-full bg-white px-5 py-3.5 text-[10px] font-bold uppercase tracking-[0.22em] text-ink transition hover:bg-white/90 disabled:cursor-not-allowed disabled:bg-white/40"
                 >
-                  Entrar al panel
+                  {busy ? 'Ingresando…' : 'Entrar al panel'}
                 </button>
 
                 <button
@@ -306,15 +353,10 @@ export default function AdminPage() {
 
               <SupabaseAlert error={error} onRetry={() => refresh()} />
 
-              {USING_DEFAULT_CREDENTIALS && (
-                <p className="mt-5 border-t border-white/10 pt-4 text-[10px] leading-relaxed text-white/30">
-                  Demo: <span className="font-semibold text-white/60">{ADMIN_EMAIL}</span> ·{' '}
-                  <span className="font-semibold text-white/60">{ADMIN_PASSWORD}</span>. Definí{' '}
-                  <code className="text-white/50">VITE_ADMIN_EMAIL</code> y{' '}
-                  <code className="text-white/50">VITE_ADMIN_PASSWORD</code> en{' '}
-                  <code className="text-white/50">.env</code> para usar los tuyos.
-                </p>
-              )}
+              <p className="mt-5 border-t border-white/10 pt-4 text-[10px] leading-relaxed text-white/30">
+                El acceso usa los usuarios de Supabase (Authentication → Users). El usuario tiene
+                que estar en la tabla <code className="text-white/50">admins</code> para entrar.
+              </p>
             </div>
 
             <p className="mt-5 text-center text-[10px] uppercase tracking-[0.16em] text-white/20">
